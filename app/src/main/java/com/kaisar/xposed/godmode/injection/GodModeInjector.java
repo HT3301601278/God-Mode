@@ -368,4 +368,27 @@ public final class GodModeInjector implements IXposedHookLoadPackage, IXposedHoo
         XposedHelpers.findAndHookMethod(View.class, "dispatchTouchEvent", MotionEvent.class, eventHandlerHook);
     }
 
+    private void applyRules(Activity activity) {
+        try {
+            // 先尝试从本地存储加载规则
+            ActRules savedRules = RemoteGMManager.INSTANCE.loadRulesFromStorage(activity.getPackageName());
+            
+            if (savedRules != null) {
+                // 如果有本地缓存的规则，直接应用
+                actRuleProp.set(savedRules);
+                Logger.d("GodMode", "Applied cached rules for " + activity.getPackageName());
+            } else {
+                // 如果没有缓存规则，尝试从远程获取
+                savedRules = RemoteGMManager.INSTANCE.getRules(activity.getPackageName());
+                if (savedRules != null) {
+                    actRuleProp.set(savedRules);
+                    // 保存到本地存储
+                    RemoteGMManager.INSTANCE.saveRulesToStorage(activity.getPackageName(), savedRules);
+                }
+            }
+        } catch (Exception e) {
+            Logger.e("GodMode", "Error applying rules", e);
+        }
+    }
+
 }

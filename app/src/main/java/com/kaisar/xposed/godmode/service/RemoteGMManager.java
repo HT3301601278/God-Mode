@@ -24,7 +24,10 @@ import com.kaisar.xposed.godmode.rule.AppRules;
 import com.kaisar.xposed.godmode.rule.ViewRule;
 import com.kaisar.xposed.godmode.util.BitmapHelper;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
@@ -47,6 +50,8 @@ public class RemoteGMManager extends IGodModeManager.Stub {
 
     public static IGodModeManager mGMM = new IGodModeManager.Default();
     private static File mLocalRules;
+
+    private static final String RULES_CACHE_FILE = "rules_cache.json";
 
     public static void init(Context pCon, XC_LoadPackage.LoadPackageParam loadPackageParam) {
         if (mInited) return;
@@ -251,5 +256,53 @@ public class RemoteGMManager extends IGodModeManager.Stub {
     @Override
     public ParcelFileDescriptor openImageFileDescriptor(String filePath) throws RemoteException {
         return null;
+    }
+
+    // 保存规则到本地存储
+    public void saveRulesToStorage(String packageName, ActRules rules) {
+        try {
+            File cacheDir = new File(mContext.get().getFilesDir(), "rules");
+            if (!cacheDir.exists()) {
+                cacheDir.mkdirs();
+            }
+            
+            File ruleFile = new File(cacheDir, packageName + "_" + RULES_CACHE_FILE);
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String jsonRules = gson.toJson(rules);
+            
+            FileOutputStream fos = new FileOutputStream(ruleFile);
+            fos.write(jsonRules.getBytes());
+            fos.close();
+            
+            Logger.d("GodMode", "Rules saved successfully for " + packageName);
+        } catch (Exception e) {
+            Logger.e("GodMode", "Error saving rules", e);
+        }
+    }
+    
+    // 从本地存储加载规则
+    public ActRules loadRulesFromStorage(String packageName) {
+        try {
+            File cacheDir = new File(mContext.get().getFilesDir(), "rules");
+            File ruleFile = new File(cacheDir, packageName + "_" + RULES_CACHE_FILE);
+            
+            if (!ruleFile.exists()) {
+                return null;
+            }
+            
+            StringBuilder jsonRules = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new FileReader(ruleFile));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonRules.append(line);
+            }
+            reader.close();
+            
+            Gson gson = new GsonBuilder().create();
+            return gson.fromJson(jsonRules.toString(), ActRules.class);
+        } catch (Exception e) {
+            Logger.e("GodMode", "Error loading rules", e);
+            return null;
+        }
     }
 }

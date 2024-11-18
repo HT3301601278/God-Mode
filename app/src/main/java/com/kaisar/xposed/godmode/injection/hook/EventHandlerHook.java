@@ -32,7 +32,9 @@ import com.kaisar.xposed.godmode.injection.weiget.CancelView;
 import com.kaisar.xposed.godmode.injection.weiget.MaskView;
 import com.kaisar.xposed.godmode.injection.weiget.ParticleView;
 import com.kaisar.xposed.godmode.rule.ViewRule;
+import com.kaisar.xposed.godmode.service.RemoteGMManager;
 import com.kaisar.xposed.godmode.util.Preconditions;
+import com.kaisar.xposed.godmode.rule.ActRules;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -295,6 +297,26 @@ public final class EventHandlerHook extends XC_MethodHook implements Property.On
                 view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
                 mLongClick = true;
             }
+        }
+    }
+
+    private void saveRule(View v, ViewRule rule) {
+        try {
+            String packageName = v.getContext().getPackageName();
+            // 保存规则
+            GodModeManager.getInstance().writeRule(packageName, rule, mSnapshot);
+            
+            // 获取当前规则集
+            ActRules currentRules = GodModeInjector.actRuleProp.get();
+            if (currentRules != null) {
+                // 同步保存到本地存储
+                RemoteGMManager.INSTANCE.saveRulesToStorage(packageName, currentRules);
+                Logger.d("GodMode", "Rules saved successfully for " + packageName);
+            } else {
+                Logger.e("GodMode", "Current rules is null");
+            }
+        } catch (Exception e) {
+            Logger.e("GodMode", "Error saving rule", e);
         }
     }
 }
