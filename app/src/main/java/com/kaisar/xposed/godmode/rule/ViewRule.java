@@ -75,6 +75,7 @@ public final class ViewRule implements Parcelable, Cloneable {
     //规则记录时间
     @SerializedName("timestamp")
     public final long timestamp;
+    private int viewId;
 
     public ViewRule(String label, String packageName, String matchVersionName, int matchVersionCode, int versionCode, String imagePath, String alias, int x, int y, int width, int height, int[] depth, String activityClass, String viewClass, String resourceName, String text, String description, int visibility, long timestamp) {
         this.label = label;
@@ -187,16 +188,7 @@ public final class ViewRule implements Parcelable, Cloneable {
     }
 
     public int getViewId(Resources res) {
-        if (!TextUtils.isEmpty(resourceName)) {
-            String[] start = resourceName.split(":");
-            String[] end = start[1].split("/");
-            String resourcePackageName = start[0];
-            String resourceTypeName = end[0];
-            String resourceEntryName = end[1];
-            return res.getIdentifier(resourceEntryName, resourceTypeName, resourcePackageName);
-        } else {
-            return View.NO_ID;
-        }
+        return res.getIdentifier(resourceName, "id", packageName);
     }
 
     @Override

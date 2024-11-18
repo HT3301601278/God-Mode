@@ -76,7 +76,23 @@ public class RemoteGMManager extends IGodModeManager.Stub {
 
     @Override
     public void setEditMode(boolean enable) throws RemoteException {
-
+        Uri.Builder builder = mConfigUri.buildUpon().path(RuleProvider.PATH_EDIT_MODE);
+        builder.appendQueryParameter("value", String.valueOf(enable));
+        mContext.get().getContentResolver().getType(builder.build());
+        
+        // 确保规则持续生效
+        if (!enable) {
+            ActRules rules = getRules(mPParam.packageName);
+            if (rules != null) {
+                GodModeInjector.actRuleProp.set(rules);
+                // 保存到本地缓存
+                try {
+                    FileUtils.stringToFile(mLocalRules.getAbsolutePath(), rules.mJson);
+                } catch (IOException e) {
+                    Logger.e("GodMode", "保存规则缓存失败", e);
+                }
+            }
+        }
     }
 
     @Override

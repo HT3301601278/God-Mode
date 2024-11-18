@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.text.TextUtils;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.View;
 
 import com.kaisar.xposed.godmode.injection.ViewController;
 import com.kaisar.xposed.godmode.injection.util.Logger;
@@ -13,12 +14,14 @@ import com.kaisar.xposed.godmode.injection.util.Property;
 import com.kaisar.xposed.godmode.rule.ActRules;
 import com.kaisar.xposed.godmode.rule.ViewRule;
 import com.kaisar.xposed.godmode.util.Preconditions;
+import com.kaisar.xposed.godmode.injection.GodModeInjector;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.Objects;
 
 import de.robv.android.xposed.XC_MethodHook;
 
@@ -50,6 +53,22 @@ public final class ActivityLifecycleHook extends XC_MethodHook implements Proper
             OnLayoutChangeListener listener = sActivities.remove(activity);
             decorView.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
             Logger.d(TAG, "destroy:" + sActivities);
+        }
+        String activityClass = activity.getClass().getName();
+        
+        // 获取当前Activity的规则
+        ActRules rules = GodModeInjector.actRuleProp.get();
+        if (rules != null) {
+            List<ViewRule> viewRules = rules.get(activityClass);
+            if (viewRules != null) {
+                // 应用所有规则
+                for (ViewRule rule : viewRules) {
+                    View targetView = activity.findViewById(rule.getViewId(activity.getResources()));
+                    if (targetView != null) {
+                        ViewController.applyRule(targetView, rule);
+                    }
+                }
+            }
         }
     }
 

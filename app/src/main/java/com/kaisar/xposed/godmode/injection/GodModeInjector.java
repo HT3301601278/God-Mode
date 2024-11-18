@@ -63,7 +63,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 public final class GodModeInjector implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 
     public final static Property<Boolean> switchProp = new Property<>();
-    public final static Property<ActRules> actRuleProp = new Property<>();
+    public final static Property<ActRules> actRuleProp = new Property<>(new ActRules());
     public static XC_LoadPackage.LoadPackageParam loadPackageParam;
     private static State state = State.UNKNOWN;
     public static final DispatchKeyEventHook dispatchKeyEventHook = new DispatchKeyEventHook();
@@ -284,7 +284,38 @@ public final class GodModeInjector implements IXposedHookLoadPackage, IXposedHoo
     }
 
     private void registerHook() {
-        //hook activity#lifecycle block view
+        // 在应用启动时自动加载规则
+        XC_MethodHook applicationHook = new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                if (mHooked) return;
+                Application app = (Application) ((param.thisObject instanceof Application) ?
+                        param.thisObject : param.args[0]);
+                
+                // 初始化远程管理器
+                RemoteGMManager.init(app, loadPackageParam);
+                
+                // 注册规则更新广播
+                app.registerReceiver(new RuleUpdateReceiver(), RuleUpdateReceiver.getIntentFilter());
+                
+                // 获取并应用已保存的规则
+                ActRules savedRules = RemoteGMManager.INSTANCE.getRules(loadPackageParam.packageName);
+                if (savedRules != null) {
+                    actRuleProp.set(savedRules);
+                }
+                
+                // 添加观察者
+                GodModeManager gmManager = GodModeManager.getInstance();
+                gmManager.addObserver(loadPackageParam.packageName, new ManagerObserver());
+                mHooked = true;
+            }
+        };
+        
+        XposedHelpers.findAndHookMethod(Application.class, "onCreate", applicationHook);
+        XposedHelpers.findAndHookMethod(Instrumentation.class, "callApplicationOnCreate", 
+                Application.class, applicationHook);
+                
+        // 添加生命周期钩子
         ActivityLifecycleHook lifecycleHook = new ActivityLifecycleHook();
         actRuleProp.addOnPropertyChangeListener(lifecycleHook);
         XposedHelpers.findAndHookMethod(Activity.class, "onPostResume", lifecycleHook);
