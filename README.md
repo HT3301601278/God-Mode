@@ -1,7 +1,7 @@
 # 项目目录结构
 
 ```
-God-Mode-dev/
+God-Mode/
 ├── app/                                # 主应用模块
 │   ├── build/                         # 构建输出目录
 │   ├── libs/                          # 本地依赖库
