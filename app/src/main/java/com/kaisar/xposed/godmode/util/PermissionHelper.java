@@ -1,15 +1,17 @@
 package com.kaisar.xposed.godmode.util;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import java.util.ArrayList;
-import java.lang.ref.WeakReference;
-import java.util.Objects;
+
 import com.kaisar.xposed.godmode.injection.util.Logger;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class PermissionHelper {
     private static final String TAG = "PermissionHelper";
