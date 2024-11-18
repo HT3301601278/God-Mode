@@ -20,6 +20,10 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
     }
     productFlavors {
     }
@@ -33,7 +37,7 @@ android {
             outputFileName = fileName
         }
     }
-    lintOptions {
+    lint {
         disable 'DeprecatedApi'
     }
 }
