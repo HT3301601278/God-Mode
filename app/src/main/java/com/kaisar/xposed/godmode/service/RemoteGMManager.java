@@ -45,7 +45,7 @@ public class RemoteGMManager extends IGodModeManager.Stub {
     private static WeakReference<Context> mContext = null;
     private static XC_LoadPackage.LoadPackageParam mPParam;
 
-    public static IGodModeManager mGMM = IGodModeManager.Stub.getDefaultImpl();
+    public static IGodModeManager mGMM = new IGodModeManager.Default();
     private static File mLocalRules;
 
     public static void init(Context pCon, XC_LoadPackage.LoadPackageParam loadPackageParam) {

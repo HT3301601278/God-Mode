@@ -19,6 +19,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
 
 import com.kaisar.xposed.godmode.injection.bridge.GodModeManager;
+import android.content.pm.ServiceInfo;
 
 /**
  * Created by jrsen on 17-10-26.
@@ -61,7 +62,11 @@ public final class NotificationService extends Service implements SharedPreferen
 
     private void postNotification(boolean editMode) {
         if (editMode) {
-            startForeground(1, buildNotification(true));
+            if (Build.VERSION.SDK_INT >= 34) {
+                startForeground(1, buildNotification(true), ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+            } else {
+                startForeground(1, buildNotification(true));
+            }
         } else {
             stopForeground(false);
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);

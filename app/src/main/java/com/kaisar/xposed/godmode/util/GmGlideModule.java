@@ -28,16 +28,21 @@ import java.io.FileNotFoundException;
 public class GmGlideModule extends AppGlideModule {
 
     @Override
-    public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
-        registry.prepend(ViewRule.class, Bitmap.class, new RuleModelLoaderFactory());
+    public boolean isManifestParsingEnabled() {
+        return false;
     }
 
-    static class RuleModelLoaderFactory implements ModelLoaderFactory<ViewRule, Bitmap> {
+    @Override
+    public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
+        super.registerComponents(context, glide, registry);
+    }
+
+    static class ViewRuleModelLoaderFactory implements ModelLoaderFactory<ViewRule, Bitmap> {
 
         @NonNull
         @Override
         public ModelLoader<ViewRule, Bitmap> build(@NonNull MultiModelLoaderFactory multiFactory) {
-            return new RuleModelLoader();
+            return new ViewRuleModelLoader();
         }
 
         @Override
@@ -45,11 +50,11 @@ public class GmGlideModule extends AppGlideModule {
         }
     }
 
-    static class RuleModelLoader implements ModelLoader<ViewRule, Bitmap> {
+    static class ViewRuleModelLoader implements ModelLoader<ViewRule, Bitmap> {
 
         @Override
         public LoadData<Bitmap> buildLoadData(@NonNull ViewRule viewRule, int width, int height, @NonNull Options options) {
-            return new LoadData<>(new ObjectKey(viewRule), new RuleDataFetcher(viewRule));
+            return new LoadData<>(new ObjectKey(viewRule), new ViewRuleDataFetcher(viewRule));
         }
 
         @Override
@@ -58,11 +63,11 @@ public class GmGlideModule extends AppGlideModule {
         }
     }
 
-    static class RuleDataFetcher implements DataFetcher<Bitmap> {
+    static class ViewRuleDataFetcher implements DataFetcher<Bitmap> {
 
         final ViewRule mViewRule;
 
-        public RuleDataFetcher(ViewRule viewRule) {
+        public ViewRuleDataFetcher(ViewRule viewRule) {
             mViewRule = viewRule;
         }
 
