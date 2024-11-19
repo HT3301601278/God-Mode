@@ -61,8 +61,6 @@ God-Mode/
   - 应用ID: com.viewblocker.jrsen
   - 最低SDK: 21
   - 目标SDK: 34
-  - 版本号: 22
-  - 版本名: 3.0.0
 
 2. **主要源代码文件**
 

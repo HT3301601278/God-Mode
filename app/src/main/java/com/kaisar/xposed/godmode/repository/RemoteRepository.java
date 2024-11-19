@@ -24,7 +24,7 @@ public class RemoteRepository {
         String branch = TextUtils.equals(BuildConfig.BUILD_TYPE, "release") ? "master" : "dev";
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .baseUrl(String.format("https://raw.githubusercontent.com/kaisar945/Xposed-GodMode/%s/", branch))
+                .baseUrl(String.format("https://raw.githubusercontent.com/HT3301601278/God-Mode/%s/", branch))
                 .build();
         RemoteService service = retrofit.create(RemoteService.class);
         Call<List<GroupInfo>> call = service.fetchGroupInfoList();
