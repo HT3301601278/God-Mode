@@ -6,10 +6,13 @@ import android.content.Context;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import androidx.annotation.Keep;
+
 /**
  * Created by jrsen on 17-10-16.
  */
 
+@Keep
 public final class GodModeApplication extends Application {
 
     public static final String TAG = "GodMode";

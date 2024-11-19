@@ -1,5 +1,6 @@
 package com.kaisar.xposed.godmode.service;
 
+import androidx.annotation.Keep;
 
 import static com.kaisar.xposed.godmode.injection.util.FileUtils.S_IRWXG;
 import static com.kaisar.xposed.godmode.injection.util.FileUtils.S_IRWXO;
@@ -54,6 +55,7 @@ import java.util.Map;
  * Client端可以使用{@link GodModeManager#getDefault()}使用该服务提供的接口
  */
 
+@Keep
 public final class GodModeManagerService extends IGodModeManager.Stub implements Handler.Callback {
 
     // /data/system/godmode

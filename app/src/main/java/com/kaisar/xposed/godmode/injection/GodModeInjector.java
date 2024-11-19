@@ -55,11 +55,13 @@ import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import androidx.annotation.Keep;
 
 /**
  * Created by jrsen on 17-10-13.
  */
 
+@Keep
 public final class GodModeInjector implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 
     public final static Property<Boolean> switchProp = new Property<>();
