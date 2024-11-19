@@ -1,80 +1,105 @@
+// 声明使用的插件
 plugins {
-    id 'com.android.application'
-    id 'androidx.navigation.safeargs'
+    id 'com.android.application'    // Android应用程序插件
+    id 'androidx.navigation.safeargs'    // Navigation安全参数传递插件
 }
 
 android {
-    compileSdkVersion 34
-    buildToolsVersion "34.0.0"
+    compileSdkVersion 34    // 编译用的Android SDK版本
+    buildToolsVersion "34.0.0"    // 构建工具版本
     
+    // Java编译选项配置
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-        encoding = 'UTF-8'
+        sourceCompatibility JavaVersion.VERSION_11    // 源代码兼容性级别为Java 11
+        targetCompatibility JavaVersion.VERSION_11    // 目标兼容性级别为Java 11
+        encoding = 'UTF-8'    // 源代码编码格式
     }
     
+    // 默认配置
     defaultConfig {
-        applicationId "com.viewblocker.jrsen"
-        minSdkVersion 21
-        targetSdkVersion 34
-        versionCode 22
-        versionName "3.0.0"
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        vectorDrawables.useSupportLibrary = true
+        applicationId "com.viewblocker.jrsen"    // 应用的包名
+        minSdkVersion 21    // 最低支持的Android版本
+        targetSdkVersion 34    // 目标Android版本
+        versionCode 22    // 应用版本号(整数)
+        versionName "4.0.0"    // 应用版本名称
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'    // 测试运行器
+        vectorDrawables.useSupportLibrary = true    // 使用矢量图支持库
     }
+
+    // 构建类型配置
     buildTypes {
-        release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        release {    // 发布版本配置
+            minifyEnabled true    // 启用代码混淆
+            shrinkResources true    // 启用资源压缩
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'    // 混淆规则文件
         }
-        debug {
-            minifyEnabled false
-            shrinkResources false
+        debug {    // 调试版本配置
+            minifyEnabled false    // 禁用代码混淆
+            shrinkResources false    // 禁用资源压缩
         }
     }
+
+    // 产品风味配置
     productFlavors {
     }
+
+    // Android资源配置
     androidResources {
-        additionalParameters("--allow-reserved-package-id", "--package-id", "0x95")
+        additionalParameters("--allow-reserved-package-id", "--package-id", "0x95")    // 设置资源包ID
     }
+
+    // 配置APK输出文件名
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            def createTime = new Date().format("YYMMdd.HHmmss", TimeZone.getTimeZone("GMT+08:00"))
-            def fileName = "${project.getParent().name}_v${createTime}.apk"
+            def createTime = new Date().format("YYMMdd.HHmmss", TimeZone.getTimeZone("GMT+08:00"))    // 使用时间戳
+            def fileName = "${project.getParent().name}_v${defaultConfig.versionName}_${createTime}.apk"    // 文件名格式
             outputFileName = fileName
         }
     }
+
+    namespace 'com.kaisar.xposed.godmode'
 }
 
+// 配置额外的Maven仓库
 repositories {
     maven {
         url "https://raw.github.com/embarkmobile/zxing-android-minimal/mvn-repo/maven-repository/"
     }
 }
 
+// 依赖配置
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(path: ':libxservicemanager')
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.navigation:navigation-fragment:2.5.3'
-    implementation 'androidx.navigation:navigation-ui:2.5.3'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')    // 本地jar包依赖
+    implementation project(path: ':libxservicemanager')    // 本地模块依赖
+    
+    // AndroidX核心依赖
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'    // 约束布局
+    implementation 'androidx.navigation:navigation-fragment:2.5.3'    // 导航组件
+    implementation 'androidx.navigation:navigation-ui:2.5.3'    // 导航UI组件
+    
+    // 测试依赖
     androidTestImplementation('androidx.test.espresso:espresso-core:3.5.1', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.core:core:1.9.0'
-    implementation "androidx.viewpager2:viewpager2:1.0.0"
-    implementation "androidx.fragment:fragment:1.5.7"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    compileOnly 'de.robv.android.xposed:api:82'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.google.android.material:material:1.8.0'
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
-    implementation 'dev.rikka.rikkax.insets:insets:1.3.0'
+    
+    // AndroidX支持库
+    implementation 'androidx.appcompat:appcompat:1.6.1'    // AppCompat支持库
+    implementation 'androidx.core:core:1.9.0'    // Core核心库
+    implementation "androidx.viewpager2:viewpager2:1.0.0"    // ViewPager2
+    implementation "androidx.fragment:fragment:1.5.7"    // Fragment
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'    // Legacy支持
+    
+    // Xposed框架依赖
+    compileOnly 'de.robv.android.xposed:api:82'    // 仅编译时使用
+    
+    // 第三方库依赖
+    implementation 'com.google.code.gson:gson:2.10.1'    // JSON处理
+    implementation 'androidx.legacy:legacy-support-v13:1.0.0'    // Legacy v13支持
+    implementation 'androidx.legacy:legacy-preference-v14:1.0.0'    // Legacy偏好设置支持
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'    // 网络请求框架
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'    // Retrofit的Gson转换器
+    implementation 'com.google.android.material:material:1.8.0'    // Material Design组件
+    implementation 'com.github.bumptech.glide:glide:4.16.0'    // 图片加载库
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'    // Glide注解处理器
+    implementation 'dev.rikka.rikkax.insets:insets:1.3.0'    // 系统窗口Insets处理库
 }

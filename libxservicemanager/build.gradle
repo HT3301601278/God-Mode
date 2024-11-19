@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+    namespace 'com.viewblocker.libxservicemanager'
     compileSdkVersion 34
     buildToolsVersion "34.0.0"
 
